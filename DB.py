@@ -18,6 +18,8 @@ sc = SparkContext('local')
 Point_RDD = None
 coordinate_cache = None
 
+flag_limit_reached = False
+
 def __init__():
     global Point_RDD
     global coordinate_cache
@@ -28,14 +30,38 @@ def getCurrent(sample_size):
     var_sampleArray = Sampling.sample_unzip(coordinate_cache, sample_size)
     return var_sampleArray
 
+def area(xbeg, xend, ybeg, yend):
+    if(ybeg == None or yend == None):
+        return 0
+
+    return (xend - xbeg) * (yend - ybeg)
+
+def sample_area(points):
+    if(len(points) == 0):
+        return 0
+
+    var_x = [x for x,y in points]
+    var_y = [y for x,y in points]
+    minx, maxx = min(var_x), max(var_x)
+    miny, maxy = min(var_y), max(var_y)
+    return area(minx, maxx, miny, maxy)
+
 def fetch(xbeg, xend, ybeg, yend, sample_size):
     global Point_RDD
     global coordinate_cache
+    global flag_limit_reached
 
     filtered = filter(lambda pr: xend > pr[0] > xbeg and yend > pr[1] > ybeg, coordinate_cache)
+    visible_area = area(xbeg, xend, ybeg, yend)
+    s_area = sample_area(filtered)
+    if s_area < visible_area/2:
+        print "zooming out"
+
     print len(filtered)
-    if len(filtered) < sample_size:
+    if len(filtered) < sample_size or s_area < visible_area/2:
         coordinate_cache = Point_RDD.filter(lambda pr: xend > pr[0] > xbeg and yend > pr[1] > ybeg).takeSample(False, DEFAULT_CACHE_SIZE)
+        if len(coordinate_cache) < DEFAULT_CACHE_SIZE:
+            flag_limit_reached = True
     filtered = filter(lambda pr: xend > pr[0] > xbeg and yend > pr[1] > ybeg, coordinate_cache)
     print len(filtered)
     return Sampling.sample_unzip(filtered, sample_size)
