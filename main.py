@@ -1,10 +1,19 @@
-
 from bokeh.client import push_session
 from bokeh.plotting import Figure, show, reset_output
 from bokeh.models import ColumnDataSource, HBox
 from bokeh.io import curdoc, output_notebook, output_server, push_notebook
 from bokeh.embed import autoload_server
+from bokeh.sampledata.us_states import data as states
+#--------------------------------
+del states["HI"]
+del states["AK"]
 
+EXCLUDED = ("ak", "hi", "pr", "gu", "vi", "mp", "as")
+state_xs = [states[code]["lons"] for code in states]
+state_ys = [states[code]["lats"] for code in states]
+state_xs = state_xs[0:5] + state_xs[6:16] + state_xs[17:18] + state_xs[19:31] + state_xs[32:46]
+state_ys = state_ys[0:5] + state_ys[6:16] + state_ys[17:18] + state_ys[19:31] + state_ys[32:46]
+#---------------------------------------------
 import time
 
 import DB
@@ -66,6 +75,7 @@ def show(sample_size):
     SAMPLE_SIZE = 1000
     xs, ys = DB.getCurrent(SAMPLE_SIZE)
     source = ColumnDataSource(data=dict(x=xs, y=ys))
+    source2 = ColumnDataSource(data=dict(x=state_xs, y=state_ys))
     plot = Figure(plot_height=800,
               plot_width=800,
               title="Plot of Stations",
@@ -73,7 +83,7 @@ def show(sample_size):
               )
 
     plot.circle('x', 'y', source=source, line_width=0, line_alpha=0.001, fill_alpha=0.2, size=15)
-
+    plot.patches('x', 'y', source=source2, fill_alpha=0.1, line_width=1, line_alpha=0.3)
 
     plot.x_range.on_change('end', update_coordinates)
     # curdoc().add_periodic_callback(printo, 2000)
