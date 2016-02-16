@@ -4,9 +4,14 @@ import random
 
 # Path for spark source folder
 os.environ['SPARK_HOME']="/home/rpalamut/spark-1.5.1"
+#os.environ['SPARK_HOME']="/Users/nitesh/Developer/spark/spark-1.4.1"
+
+
 
 # Append pyspark  to Python Path
 sys.path.append("/home/rpalamut/spark-1.5.1/python")
+
+#sys.path.append("/Users/nitesh/Developer/spark/spark-1.4.1/python")
 
 from pyspark import SparkContext
 
