@@ -72,11 +72,11 @@ def show(sample_size):
                           tools="pan, reset, resize, save, wheel_zoom",
                           )
 
-    scatter_plot.circle('x', 'y', color='color', source=source, line_width=0, line_alpha=0.001, fill_alpha=0.1, size=15)
-    scatter_plot.patches('x', 'y', source=state_source, fill_alpha=0.2, line_width=3, line_alpha=0.3)
+    scatter_plot.circle('x', 'y', color='color', source=source, line_width=0, line_alpha=0.001, fill_alpha=0.5, size=15)
+    scatter_plot.patches('x', 'y', source=state_source, fill_alpha=0.1, line_width=3, line_alpha=1)
 
     scatter_plot.x_range.on_change('end', update_coordinates)
-    line_chart = Figure(title="line", plot_width=350, plot_height=350)
+    line_chart = Figure(title="Distribution over Time", plot_width=350, plot_height=350)
     line_chart.line(x='x', y='y', source=line_chart_source)
     pie_chart_plot = Figure(plot_height=350,
                             plot_width=350,
