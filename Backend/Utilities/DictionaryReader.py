@@ -16,7 +16,7 @@ def tuplize(DATA_PATH):
     for i in dict:
         entry = dict[i]
         y, x = entry['geo']
-        time = entry['time']
+        time = parse(entry['time']).day
         color = colorDict[entry['group']]
         tuple = (x, y, color, time)
         tuple_list.append(tuple)

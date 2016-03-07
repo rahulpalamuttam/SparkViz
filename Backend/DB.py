@@ -14,7 +14,7 @@ sys.path.append("/home/rpalamut/spark-1.5.1/python")
 
 DEFAULT_CACHE_SIZE = 10000
 SAMPLE_SIZE = 1000
-sc = SparkContext('local')
+sc = SparkContext('local[6]')
 Point_RDD = None
 coordinate_cache = None
 flag_limit_reached = False
@@ -24,7 +24,7 @@ def __init__():
     global Point_RDD
     global coordinate_cache
     global SAMPLE_SIZE
-    Point_RDD = sc.parallelize(Reader.twitterData(), 1)
+    Point_RDD = sc.parallelize(Reader.twitterData(), 18)
     coordinate_cache = Point_RDD.takeSample(True, DEFAULT_CACHE_SIZE)
 
 
@@ -35,7 +35,7 @@ def __init__(sample_size):
     Point_RDD = sc.parallelize(Reader.twitterData(), 1)
     coordinate_cache = Point_RDD.takeSample(True, DEFAULT_CACHE_SIZE)
     SAMPLE_SIZE = sample_size
-    print coordinate_cache
+    #print coordinate_cache
 
 
 def get_current():
@@ -48,13 +48,14 @@ def area(x_beg, x_end, y_beg, y_end):
         return 0
     return (x_end - x_beg) * (y_end - y_beg)
 
-# def min_time():
-#     Time_RDD = Point_RDD.map(lambda x, y, z, t: parse(t))
-#     return Time_RDD.min()
-#
-# def max_time():
-#     Time_RDD = Point_RDD.map(lambda x, y, z, t: parse(t))
-#     return Time_RDD.max()
+
+def min_time():
+    return Point_RDD.map(lambda x: x[3]).min(lambda x: x)
+
+
+def max_time():
+    return Point_RDD.map(lambda x: x[3]).max(lambda x: x)
+
 
 def sample_area(points):
     if len(points) == 0:
@@ -67,7 +68,7 @@ def sample_area(points):
     return area(minx, maxx, miny, maxy)
 
 
-def fetch(x_beg, x_end, y_beg, y_end):
+def fetch(x_beg, x_end, y_beg, y_end, time_bin):
     global Point_RDD
     global coordinate_cache
     global DEFAULT_CACHE_SIZE
