@@ -14,4 +14,4 @@ def sample_unzip(var_tuples, sample_size):
     if len(var_sampled) > 0:
         return zip(*var_sampled)
     else:
-        return [], [], []
+        return [], [], [], []

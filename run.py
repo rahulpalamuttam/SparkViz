@@ -6,4 +6,6 @@ import main
 #     print dict[i]['group']
 #     print dict[i]['geo']
 
+
+
 main.show(2000)
